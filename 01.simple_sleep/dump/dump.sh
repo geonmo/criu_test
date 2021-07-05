@@ -1,3 +1,3 @@
 #!/bin/bash
-PIDN=$(ps -C test_sleep.sh|awk '{print $1}'| egrep -v "PID")
+PIDN=$(pgrep test_sleep.sh)
 criu dump -t $PIDN --shell-job

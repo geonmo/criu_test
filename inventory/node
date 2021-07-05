@@ -1,0 +1,17 @@
+[node]
+node0.intranet.local
+node1.intranet.local
+node2.intranet.local
+node3.intranet.local
+
+
+[submit]
+node0.intranet.local
+
+[central-manager]
+node1.intranet.local
+
+[execute]
+node2.intranet.local
+node3.intranet.local
+
