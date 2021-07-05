@@ -1,0 +1,15 @@
+executable = test.sh
+universe   = vanilla
+arguments  = $(Process)
+
+getenv     = True
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+output = job_$(Process).out
+error = job_$(Process).err
+log = submit.log
+
+
+queue 1
+
