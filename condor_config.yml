@@ -15,6 +15,11 @@
       with_items:
         - "{{ ipinfo }}"
       notify: restart_condor
+    - name: Supporting Singularity service
+      copy:
+        dest: /etc/condor/config.d/04-singularity.conf
+        content: "SINGULARITY_JOB = !isUndefined(TARGET.SingularityImage)\nSINGULARITY_IMAGE_EXPR = TARGET.SingularityImage\n"
+      notify: restart_condor
   handlers: 
     - name: restart_condor
       service: 

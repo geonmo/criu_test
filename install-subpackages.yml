@@ -1,4 +1,4 @@
-- name: Install criu and python3-criu
+- name: Install various packages
   hosts: all
   vars:
     ipinfo:
@@ -14,5 +14,9 @@
     - name: Install python3-criu
       dnf:
         name: python3-criu
+        state: latest
+    - name: Install singularity
+      dnf:
+        name: singularity
         state: latest
 
