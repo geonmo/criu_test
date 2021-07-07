@@ -9,7 +9,7 @@
   tasks:
     - copy: 
         dest: /etc/condor/config.d/03-private.conf 
-        content: "BIND_ALL_INTERFACES = FALSE\nNETWORK_INTERFACE = {{ item.ip }}\n" 
+        content: "BIND_ALL_INTERFACES = FALSE\nNETWORK_INTERFACE = {{ item.ip }}\nUID_DOMAIN=node1.intranet.local\nTRUST_UID_DOMAIN=True\n" 
       when: 
         - "ansible_hostname == item.name"
       with_items:
