@@ -4,7 +4,7 @@ NODE=${HOSTNAME::5}
 
 if [ ! -d "/mnt/share" ];
 then
-	sudo mount -p /mnt/share
+	sudo mkdir -p /mnt/share
 fi
 
 if [ -s "/etc/exports" ];
