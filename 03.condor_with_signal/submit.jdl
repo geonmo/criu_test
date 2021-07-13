@@ -5,15 +5,22 @@ arguments  = $(Process)
 
 getenv     = True
 should_transfer_files = YES
-when_to_transfer_output = ON_EXIT
+when_to_transfer_output = ON_EXIT_OR_EVICT
++WantCheckpointSignal = True
++CheckpointSig = "SIGUSR2"
++CheckpointExitBySignal = False
++CheckpointExitCode = 85
++WantFTOnCheckpoint = True
 
 output = job_$(Process).out
 error = job_$(Process).err
 log = submit.log
 
+
+
 requirements = (Machine =?= "node2.intranet.local")
 
-transfer_input_files = test_sleep.sh
+transfer_input_files = test_sleep.sh, centos8.sif
 transfer_output_files = output.log, error.log
 queue 1
 
