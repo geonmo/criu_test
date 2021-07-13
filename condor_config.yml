@@ -1,4 +1,4 @@
-- name: Install HTCondor
+- name: Install HTCondor and configuration for private network
   hosts: all
   vars:
     daemon:
@@ -6,38 +6,34 @@
      - { name: "node1", role: "central-manager"}
      - { name: "node2", role: "execute"}
      - { name: "node3", role: "execute"}
-  tasks:
-     - shell: "curl -fsSL https://get.htcondor.org | sudo /bin/bash -s -- --no-dry-run --password \"gsdc_password\" --{{ item.role }} node1.intranet.local"
-       when: 
-         - "ansible_hostname == item.name"
-       with_items:
-         - "{{ daemon }}"
-
-- name: Fix NIC to use internal network
-  hosts: all
-  vars:
     ipinfo:
       - { name: "node0", ip: "192.168.10.3" }
       - { name: "node1", ip: "192.168.10.4" }
       - { name: "node2", ip: "192.168.10.5" }
       - { name: "node3", ip: "192.168.10.6" }
   tasks:
-    - copy: 
-        dest: /etc/condor/config.d/03-private.conf 
-        content: "BIND_ALL_INTERFACES = FALSE\nNETWORK_INTERFACE = {{ item.ip }}\nUID_DOMAIN=node1.intranet.local\nTRUST_UID_DOMAIN=True\n" 
-      when: 
-        - "ansible_hostname == item.name"
-      with_items:
-        - "{{ ipinfo }}"
-      notify: restart_condor
-    - name: Supporting Singularity service
-      copy:
-        dest: /etc/condor/config.d/04-singularity.conf
-        content: "SINGULARITY_JOB = !isUndefined(TARGET.SingularityImage)\nSINGULARITY_IMAGE_EXPR = TARGET.SingularityImage\n"
-      notify: restart_condor
+     - shell: "curl -fsSL https://get.htcondor.org | sudo /bin/bash -s -- --no-dry-run --password \"gsdc_password\" --{{ item.role }} node1.intranet.local"
+       when: 
+         - "ansible_hostname == item.name"
+       with_items:
+         - "{{ daemon }}"
+     - copy: 
+         dest: /etc/condor/config.d/03-private.conf 
+         content: "BIND_ALL_INTERFACES = FALSE\nNETWORK_INTERFACE = {{ item.ip }}\nUID_DOMAIN=node1.intranet.local\nTRUST_UID_DOMAIN=True\n" 
+       when: 
+         - "ansible_hostname == item.name"
+       with_items:
+         - "{{ ipinfo }}"
+       notify: restart_condor
+     - name: Supporting Singularity service
+       copy:
+         dest: /etc/condor/config.d/04-singularity.conf
+         content: "SINGULARITY_JOB = !isUndefined(TARGET.SingularityImage)\nSINGULARITY_IMAGE_EXPR = TARGET.SingularityImage\n"
+       notify: restart_condor
   handlers: 
-    - name: restart_condor
-      service: 
-        name: condor
-        state: restarted
+     - name: restart_condor
+       service: 
+         name: condor
+         state: restarted
+
 
