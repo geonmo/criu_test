@@ -14,9 +14,11 @@ fi
 
 if [ $NODE == "node0" ];
 then
+    sudo dnf install -y nfs-utils
 	sudo firewall-cmd --add-service=nfs --permanent
 	sudo firewall-cmd --reload
 else
-	echo "Wrong node"
+    sudo dnf install -y nfs-utils
+	echo "192.168.10.3:/mnt/share /mnt/share nfs defaults 0 0 " | sudo tee -a /etc/fstab
 fi
 
