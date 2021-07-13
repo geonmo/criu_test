@@ -20,7 +20,7 @@ log = submit.log
 
 requirements = (Machine =?= "node2.intranet.local")
 
-transfer_input_files = test_sleep.sh, centos8.sif
+transfer_input_files = test_sleep.sh
 transfer_output_files = output.log, error.log
 queue 1
 
