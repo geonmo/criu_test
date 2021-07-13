@@ -4,11 +4,13 @@ trap ReceiveCheckPointSignal SIGUSR2
 
 function ReceiveCheckPointSignal() {
 	TPID=$(pgrep test_sleep.sh)
-	criu dump -v5 -j -t ${TPID} --evasive-devices #--leave-running 
-    tar -czvf dump.tar.gz *.img stats* sleep*.log
-    scp dump.tar.gz geonmo@node0:~/dump.tar.gz
+
 	ls /proc/${TPID}/fd/*
 	cat /proc/${TPID}/fdinfo/0
+
+	criu dump -v5 -j -t ${TPID} --evasive-devices #--leave-running 
+    tar -czvf dump.tar.gz *.img stats* sleep*.log
+    cp dump.tar.gz /mnt/share/geonmo/
     exit 85
 }
 

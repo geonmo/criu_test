@@ -6,21 +6,30 @@ arguments  = $(Process)
 getenv     = True
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT_OR_EVICT
-+WantCheckpointSignal = True
-+CheckpointSig = "SIGUSR2"
-+CheckpointExitBySignal = False
-+CheckpointExitCode = 85
-+WantFTOnCheckpoint = True
+
 
 output = job_$(Process).out
 error = job_$(Process).err
+
 log = submit.log
 
+
+KillSig= SIGUSR2
+KillSigTimeout = 30
+
++WantCheckpointSignal = True
++WantCheckpoint = True
++CheckpointSig = "SIGUSR2"
++CheckpointExitBySignal = True
++CheckpointExitCode = 85
++WantFTOnCheckpoint = True
++WantRemoteSyscalls = True
 
 
 requirements = (Machine =?= "node2.intranet.local")
 
-transfer_input_files = test_sleep.sh
-transfer_output_files = output.log, error.log
+transfer_input_files = test_sleep.sh,dump.tar.gz
+transfer_output_files = sleep_output.log, sleep_error.log
+
 queue 1
 
