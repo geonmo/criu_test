@@ -19,4 +19,8 @@
       dnf:
         name: singularity
         state: latest
+    - name: Install python3-root
+      dnf:
+        name: python3-root
+        state: latest
 
