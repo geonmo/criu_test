@@ -3,13 +3,15 @@
 trap ReceiveCheckPointSignal SIGUSR2
 
 function ReceiveCheckPointSignal() {
+	TPID=$(pgrep test_sleep.sh)
+	echo "dumping ${TPID} process"
 	criu dump -v5 -j -t ${TPID} #--evasive-devices #--leave-running 
-    exit 85
+   	exit 85
 }
 
 
 if [ -s stats-dump ]; then
-	setsid -f criu restore -j
+	criu restore -j -d
 	TPID=$(pgrep test_sleep.sh)
 	while true
 	do

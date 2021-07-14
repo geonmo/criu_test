@@ -15,7 +15,7 @@ log = submit.log
 
 
 KillSig= SIGUSR2
-KillSigTimeout = 30
+#KillSigTimeout = 30
 
 #+WantCheckpointSignal = True
 #+WantCheckpoint = True
