@@ -17,13 +17,13 @@ log = submit.log
 KillSig= SIGUSR2
 KillSigTimeout = 30
 
-+WantCheckpointSignal = True
-+WantCheckpoint = True
-+CheckpointSig = "SIGUSR2"
-+CheckpointExitBySignal = True
-+CheckpointExitCode = 85
-+WantFTOnCheckpoint = True
-+WantRemoteSyscalls = True
+#+WantCheckpointSignal = True
+#+WantCheckpoint = True
+#+CheckpointSig = "SIGUSR2"
+#+CheckpointExitBySignal = True
+#+CheckpointExitCode = 85
+#+WantFTOnCheckpoint = True
+#+WantRemoteSyscalls = True
 
 
 requirements = (Machine =?= "node2.intranet.local")
