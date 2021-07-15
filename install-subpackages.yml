@@ -11,6 +11,10 @@
       dnf:
         name: criu
         state: latest
+    - name: Change permission of criu binary
+      file:
+        path: /usr/sbin/criu
+        mode: "4755"
     - name: Install python3-criu
       dnf:
         name: python3-criu
@@ -23,4 +27,41 @@
       dnf:
         name: python3-root
         state: latest
+    - name: Install cvmfs-release
+      dnf:
+        name: https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm
+        disable_gpg_check: yes
+        state: present
+    - name: Install CvmFS
+      dnf:
+        name: cvmfs
+        state: latest
+    - name: Create cvmfs cache directory
+      file:
+        path: /cvmfs_cache
+        owner: cvmfs
+        group: cvmfs
+        state: directory
+    - community.general.sefcontext:
+        target: '/cvmfs_cache(/.*)?'
+        setype: cvmfs_cache_t
+        state: present     
+    - ansible.builtin.command: restorecon -irv /cvmfs_cache
+    - name: Configure cvmfs
+      copy:
+        dest: /etc/cvmfs/default.local
+        content:  "CVMFS_REPOSITORIES=\"cms.cern.ch\"\nCVMFS_HTTP_PROXY=DIRECT\nCVMFS_QUOTA_LIMIT=\"30000\"\nCVMFS_CACHE_BASE=\"/cvmfs_cache\""
+      notify: restart autofs
+    - ansible.builtin.command: cvmfs_config setup
+    - ansible.builtin.command: cvmfs_config chksetup
+    - ansible.builtin.command: cvmfs_config probe
+      notify: restart autofs
+
+  handlers:
+    - name: restart autofs  
+      service: 
+        name: autofs
+        state: restarted   
+
+
 
