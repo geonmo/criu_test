@@ -1,0 +1,59 @@
+- name: Setup NFS packages
+  gather_facts: no
+  hosts: all
+  tasks:
+    - name: Install nfs-utils
+      dnf:
+        name: nfs-utils
+        state: latest
+    - name: Create /mnt/share directory
+      file:
+        path: /mnt/share
+        owner: root
+        group: root
+        state: directory
+        mode: "3777"
+
+- name: Install and configure nfs
+  hosts: submit
+  gather_facts: no
+  tasks:
+    - name: Create user directory
+      file:
+        path: /mnt/share/geonmo
+        owner: geonmo
+        group: geonmo
+        state: directory
+        mode: "700"
+    - name: Check /etc/exports
+      file: 
+        path: /etc/exports
+        state: touch
+    - name: permit traffic in default zone for nfs service
+      firewalld:
+        service: nfs
+        permanent: yes
+        immediate: yes
+        state: enabled
+    - name: Configure nfs setup 
+      lineinfile: 
+        path: /etc/exports
+        line: "/mnt/share *(rw,sync)"
+      notify: restart nfs-server
+  handlers:
+    - name: restart nfs-server
+      service: 
+        name: nfs-server
+        state: restarted
+      
+
+- name: Configure nfs clients
+  hosts: execute
+  gather_facts: no
+  tasks:
+    - name: make mountpoint
+      mount:
+        path: /mnt/share
+        src: 192.168.10.3:/mnt/share
+        fstype: nfs
+        state: mounted
