@@ -42,19 +42,24 @@
         owner: cvmfs
         group: cvmfs
         state: directory
-    - community.general.sefcontext:
+    - name: Setup cvmfs_cache_t context for /cvmfs_cache direcotyr
+      community.general.sefcontext:
         target: '/cvmfs_cache(/.*)?'
         setype: cvmfs_cache_t
         state: present     
-    - ansible.builtin.command: restorecon -irv /cvmfs_cache
+    - name: Restorecon to apply SELinux policy
+      ansible.builtin.command: restorecon -irv /cvmfs_cache
     - name: Configure cvmfs
       copy:
         dest: /etc/cvmfs/default.local
         content:  "CVMFS_REPOSITORIES=\"cms.cern.ch\"\nCVMFS_HTTP_PROXY=DIRECT\nCVMFS_QUOTA_LIMIT=\"30000\"\nCVMFS_CACHE_BASE=\"/cvmfs_cache\""
       notify: restart autofs
-    - ansible.builtin.command: cvmfs_config setup
-    - ansible.builtin.command: cvmfs_config chksetup
-    - ansible.builtin.command: cvmfs_config probe
+    - name: cvmfs_config setup
+      ansible.builtin.command: cvmfs_config setup
+    - name: cvmfs_config cksetup
+      ansible.builtin.command: cvmfs_config chksetup
+    - name: cvmfs_config probe
+      ansible.builtin.command: cvmfs_config probe
       notify: restart autofs
 
   handlers:
