@@ -2,6 +2,7 @@
 
 
 from ROOT import *
+import sys
 
 f1 = TFile.Open("h1.root","recreate")
 
@@ -15,7 +16,7 @@ rand3.SetSeed(time(0))
 for x in range(100):
     value = int(rand3.Rndm()*100%100)
     print(f"Fill {value} at {x}")
-
+    sys.stdout.flush()
     h1.Fill(x,value)
     sleep(2) 
 
