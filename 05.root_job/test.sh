@@ -3,7 +3,7 @@
 trap ReceiveCheckPointSignal SIGUSR2
 
 function ReceiveCheckPointSignal() {
-	TPID=$(pgrep test_sleep.sh)
+	#TPID=$(pgrep test_root.py)
 
 	criu dump -v5 -j -t ${TPID} -o dump.log --evasive-devices #--leave-running
 	echo "$(pwd)" > workdir 
@@ -27,7 +27,7 @@ if [ -s dump.tar.gz ]; then
 	WORKDIR=$(cat workdir)
 	sudo ln -Tfs $(pwd) ${WORKDIR}
          	
-	criu restore -d -j --inherit-fd "fd[7]:${WORKDIR:1}/root_output.log" --inherit-fd "fd[8]:${WORKDIR:1}/root_error.log" --inherit-fd "fd[9]:${WORKDIR:1}/test_root.py" --inherit-fd "fd[10]:${WORKDIR:1}/h1.root" 7>> sleep_output.log 8>>sleep_error.log 9> test_sleep.sh 10>h1.root
+	criu restore -d -j --inherit-fd "fd[7]:${WORKDIR:1}/root_output.log" --inherit-fd "fd[8]:${WORKDIR:1}/root_error.log" --inherit-fd "fd[9]:${WORKDIR:1}/test_root.py" --inherit-fd "fd[10]:${WORKDIR:1}/h1.root" 7>> sleep_output.log 8>>sleep_error.log 9> test_root.py 10>h1.root
 	TPID=$(cat tpid)
 	while true
 	do
