@@ -25,10 +25,6 @@
         group: geonmo
         state: directory
         mode: "700"
-    - name: Check /etc/exports
-      file: 
-        path: /etc/exports
-        state: touch
     - name: permit traffic in default zone for nfs service
       firewalld:
         service: nfs
@@ -36,7 +32,8 @@
         immediate: yes
         state: enabled
     - name: Configure nfs setup 
-      lineinfile: 
+      lineinfile:
+        create: yes 
         path: /etc/exports
         line: "/mnt/share *(rw,sync)"
       notify: restart nfs-server
