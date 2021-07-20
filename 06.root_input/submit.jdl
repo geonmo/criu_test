@@ -1,0 +1,35 @@
+executable = test.sh
+universe   = vanilla
+arguments  = $(Process)
+
+
+getenv     = True
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT_OR_EVICT
+
+
+output = job_$(Process).out
+error = job_$(Process).err
+
+log = submit.log
+
+
+KillSig= SIGUSR2
+KillSigTimeout = 30
+
+#+WantCheckpointSignal = True
+#+WantCheckpoint = True
+#+CheckpointSig = "SIGUSR2"
+#+CheckpointExitBySignal = True
+#+CheckpointExitCode = 85
+#+WantFTOnCheckpoint = True
+#+WantRemoteSyscalls = True
+
+
+requirements = (Machine =?= "node2.intranet.local")
+
+transfer_input_files = test_root.py, /mnt/share/geonmo/dump.tar.gz
+transfer_output_files = root_output.log, root_error.log, h1.root
+
+queue 1
+
