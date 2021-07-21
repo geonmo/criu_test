@@ -8,7 +8,7 @@ node3.intranet.local
 [submit]
 node0.intranet.local
 
-[central-manager]
+[central_manager]
 node1.intranet.local
 
 [execute]

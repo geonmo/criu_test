@@ -25,13 +25,12 @@ function ReceiveCheckPointSignal() {
 	exit 85
 }
 
-
-source /cvmfs/cms.cern.ch/cmsset_defaul.sh
+source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=cc8_amd64_gcc9
 cd /cvmfs/cms.cern.ch/cc8_amd64_gcc9/cms/cmssw/CMSSW_11_3_2/src
 eval `scramv1 runtime -sh`
-cd -
 
+cd - 
 
 if [ -s dump.tar.gz ]; then
         tar -zxvf dump.tar.gz
@@ -39,7 +38,7 @@ if [ -s dump.tar.gz ]; then
 	TPID=$(cat tpid)
 	sudo ln -Tfs $(pwd) ${WORKDIR}
          	
-	criu restore -d -j --inherit-fd "fd[7]:${WORKDIR:1}/root_output.log" --inherit-fd "fd[8]:${WORKDIR:1}/root_error.log" --inherit-fd "fd[9]:${WORKDIR:1}/test_root.py" --inherit-fd "fd[10]:${WORKDIR:1}/h1.root" 7>> root_output.log 8>>root_error.log 9> test_root.py 10>h1.root
+	criu restore -d -j --inherit-fd "fd[7]:${WORKDIR:1}/root_output.log" --inherit-fd "fd[8]:${WORKDIR:1}/root_error.log" --inherit-fd "fd[9]:${WORKDIR:1}/test_root.py" --inherit-fd "fd[10]:${WORKDIR:1}/h1.root" 7>> root_output.log 8>>root_error.log 9> test_root.py 10>>h1.root
 	while true
 	do
 		echo "Monitoring ${TPID} procces"

@@ -4,8 +4,7 @@
 from ROOT import *
 import sys
 
-f1 = TFile.Open("h1.root","recreate")
-
+input_file = TFile.Open("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/geonmo/")
 
 h1 = TH1F("his","hist",100,0,100)
 
@@ -13,6 +12,7 @@ rand3 = TRandom3()
 rand3.SetSeed(time(0))
 
 
+f1 = TFile.Open("h1.root","recreate")
 for x in range(50):
     value = int(rand3.Rndm()*100%100)
     print(f"Fill {value} at {x}")

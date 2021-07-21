@@ -61,12 +61,50 @@
     - name: cvmfs_config probe
       ansible.builtin.command: cvmfs_config probe
       notify: restart autofs
-
   handlers:
     - name: restart autofs  
       service: 
         name: autofs
-        state: restarted   
+        state: restarted  
+- name: Install UI setting
+  hosts: submit
+  gather_facts: no
+  tasks:
+    - name: Install voms-client
+      dnf:
+        name: voms-clients-cpp
+        state: latest
+      tags:
+        - ui
+    - name: Install osg-release
+      dnf:
+        name: https://repo.opensciencegrid.org/osg/3.5/osg-3.5-el8-release-latest.rpm
+        state: present
+        disable_gpg_check: yes
+      tags:
+        - ui
+    - name: Install osg ca certs
+      dnf:
+        name: osg-ca-certs
+        state: latest
+      tags:
+        - ui
+    - name: Install wlcg repo
+      dnf:
+        name: http://linuxsoft.cern.ch/wlcg/centos8/x86_64/wlcg-repo-1.0.0-1.el8.noarch.rpm
+        disable_gpg_check: yes
+        state: present
+      tags:
+        - ui
+    - name: Install CMS voms lsf file
+      dnf:
+        name: http://linuxsoft.cern.ch/wlcg/centos7/x86_64/wlcg-voms-cms-1.0.0-1.el7.noarch.rpm
+        disable_gpg_check: yes
+        state: present
+      tags:
+        - ui
+
+        
 
 
 
