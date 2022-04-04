@@ -4,7 +4,9 @@
 from ROOT import *
 import sys
 
-input_file = TFile.Open("root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/geonmo/")
+#input_file = TFile.Open("HIN-HINPbPbAutumn18DRHIMix-00003_step2_399.root")
+
+#input_file.Print()
 
 h1 = TH1F("his","hist",100,0,100)
 
