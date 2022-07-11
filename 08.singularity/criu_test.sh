@@ -18,8 +18,10 @@ function ReceiveCheckPointSignal() {
 
 if [ -s checkpoint.tar.gz ]; then
         tar -zxvf checkpoint.tar.gz
-	DUMP_DIR=$(ls dump-*)
+	DUMP_DIR=$(echo dump-*)
 	TPID=${DUMP_DIR:5}
+	echo ${DUMP_DIR}
+	echo ${TPID}
 	criu restore -d -D $DUMP_DIR
 	while true
 	do

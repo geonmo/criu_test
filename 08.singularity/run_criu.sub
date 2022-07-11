@@ -5,8 +5,8 @@ requirements = ( HasSingularity == true )
 getenv     = True
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT_OR_EVICT
-output = $(Cluster)/job_$(Process).out
-error = $(Cluster)/job_$(Process).err
+output = job_$(Process).out
+error = job_$(Process).err
 log = job_$(Process).log
 
 KillSig= SIGUSR2
@@ -22,7 +22,7 @@ transfer_output_files = $(transfer_checkpoint_files), finish.txt
 
 
 checkpoint_exit_code = 85
-#+WantFTOnCheckpoint = True
++WantFTOnCheckpoint = True
 
 notification = Error
 notify_user = geonmo@kisti.re.kr
