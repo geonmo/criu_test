@@ -1,5 +1,6 @@
 #!/bin/bash
 count=0
+touch finish.txt
 ls -l $PWD
 if [ -e outlog.txt ]; then
     echo "Found outlog.txt"
@@ -11,7 +12,7 @@ do
 	echo $count | tee -a outlog.txt
 	count=$((count+1))
 	sleep 2
-	if [ $count -ge 50 ];then
+	if [ $count -ge 20 ];then
 		echo "Job is finished" > finish.txt
 		exit 0
 	fi

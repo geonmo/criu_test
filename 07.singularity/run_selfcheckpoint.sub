@@ -11,23 +11,27 @@ log = job_$(Process).log
 
 KillSig= SIGUSR2
 
-requirements = (Machine =?= "node2.intranet.local")
+requirements = (Machine =?= "node3.intranet.local")
 transfer_input_files = test_selfcheckpoint_sleep.sh
-transfer_checkpoint_files = outlog.txt 
-transfer_output_files = finish.txt
+#transfer_checkpoint_files = outlog.txt 
+transfer_output_files = outlog.txt, finish.txt
 
 +SingularityImage = "/shared/container_images/geant4_wCRIU.sif"
 +SingularityBind = "/shared"
 +SingularityExtraArgs= "--add-caps all"
 
 
-+CheckpointSig = "SIGUSR2"
-+CheckpointExitBySignal = True
-+CheckpointExitCode = 85
-+WantFTOnCheckpoint = True
-+WantRemoteSyscalls = True
-+WantCheckpointSignal = True
-+WantCheckpoint = True
+checkpoint_exit_code = 85
+
+
+#+CheckpointExitCode = 85
+#+WantFTOnCheckpoint = True
+#+WantCheckpointSignal = True
+#+CheckpointSig = "SIGTERM"
+#+CheckpointExitBySignal = True
+#+WantRemoteSyscalls = True
+#+WantCheckpoint = True
+
 
 notification = Error
 notify_user = geonmo@kisti.re.kr

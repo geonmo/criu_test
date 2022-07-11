@@ -4,13 +4,13 @@ trap ReceiveCheckPointSignal SIGUSR2
 
 function ReceiveCheckPointSignal() {
 	TPID=$(pgrep test_sleep.sh)
-
-	criu-ns dump -v5 -j -t ${TPID} -o dump.log --evasive-devices #--leave-running
+	mkdir dump-${TPID}
+	criu dump -v5 -t ${TPID} -D dump-${TPID} -o criu.log # -j #--evasive-devices #--leave-running
 	echo "$(pwd)" > workdir 
         if [ ! -s tpid ]; then	
 		echo ${TPID} > tpid
 	fi
-    	tar -czvf dump.tar.gz *.img stats* workdir tpid
+    	tar -czvf checkpoint.tar.gz dump-${TPID} workdir tpid
 
 	## Debuging
 	#sudo chown geonmo.geonmo dump.log
@@ -22,14 +22,15 @@ function ReceiveCheckPointSignal() {
 }
 
 
-if [ -s dump.tar.gz ]; then
-        tar -zxvf dump.tar.gz
+if [ -s checkpoint.tar.gz ]; then
+        tar -zxvf checkpoint.tar.gz
 	WORKDIR=$(cat workdir)
+	TPID=$(cat tpid)
 	#sudo ln -Tfs $(pwd) ${WORKDIR}
          	
 	#criu restore -d -j --inherit-fd "fd[7]:${WORKDIR:1}/sleep_output.log" --inherit-fd "fd[8]:${WORKDIR:1}/sleep_error.log" --inherit-fd "fd[9]:${WORKDIR:1}/test_sleep.sh" 7>> sleep_output.log 8>>sleep_error.log 9> test_sleep.sh
-	criu-ns restore -d -j 
-	TPID=$(cat tpid)
+	criu restore -d -D dump-${TPID}
+	#TPID=$(pgrep test_sleep.sh)
 	while true
 	do
 		echo "Monitoring ${TPID} procces"
@@ -41,7 +42,7 @@ if [ -s dump.tar.gz ]; then
 		sleep 1
 	done
 else
-	./test_sleep.sh & #>sleep_output.log 2> sleep_error.log < /dev/null &
+	setsid ./test_sleep.sh </dev/null &> /dev/null & #>sleep_output.log 2> sleep_error.log < /dev/null &
 	TPID=$!
 	wait ${TPID}
 fi

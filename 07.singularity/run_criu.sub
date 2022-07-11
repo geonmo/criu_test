@@ -1,5 +1,4 @@
 JobBatchName            = CRIU_Test_$(Cluster)
-#executable = singularity_test.sh
 executable = criu_test.sh
 universe   = vanilla
 requirements = ( HasSingularity == true )
@@ -12,23 +11,24 @@ log = job_$(Process).log
 
 KillSig= SIGUSR2
 
-requirements = (Machine =?= "node2.intranet.local")
+#requirements = (Machine =?= "node2.intranet.local")
 transfer_input_files = test_sleep.sh
-transfer_checkpoint_files = checkpoint.tar.gz 
-transfer_output_files = finish.txt
+transfer_checkpoint_files = checkpoint.tar.gz, criu.log, running.txt 
+transfer_output_files = 
 
 +SingularityImage = "/shared/container_images/geant4_wCRIU.sif"
 +SingularityBind = "/shared"
 +SingularityExtraArgs= "--add-caps all"
 
 
-+CheckpointSig = "SIGUSR2"
-+CheckpointExitBySignal = True
-+CheckpointExitCode = 85
-+WantFTOnCheckpoint = True
-+WantRemoteSyscalls = True
-+WantCheckpointSignal = True
-+WantCheckpoint = True
+checkpoint_exit_code = 85
+#+CheckpointSig = "SIGUSR2"
+#+CheckpointExitBySignal = True
+#+CheckpointExitCode = 85
+#+WantFTOnCheckpoint = True
+#+WantRemoteSyscalls = True
+#+WantCheckpointSignal = True
+#+WantCheckpoint = True
 
 notification = Error
 notify_user = geonmo@kisti.re.kr
