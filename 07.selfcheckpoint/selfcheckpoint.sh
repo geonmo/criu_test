@@ -21,8 +21,12 @@ function ReceiveCheckPointSignal() {
 	echo "Checkpoint!!"
 	exit 85
 }
+	whoami
+	pwd
+	echo "Process PID is $$"
 
-
-	./test_sleep.sh & #>sleep_output.log 2> sleep_error.log < /dev/null &
+	./test_selfcheckpoint_sleep.sh & #>sleep_output.log 2> sleep_error.log < /dev/null &
 	TPID=$!
 	wait ${TPID}
+	echo "sleep program is finished!"
+	exit 0

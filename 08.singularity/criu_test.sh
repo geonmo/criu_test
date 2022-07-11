@@ -18,6 +18,7 @@ function ReceiveCheckPointSignal() {
 
 	#cp -f dump.tar.gz /mnt/share/geonmo/
 	#sudo rm -rf ${WORKDIR}
+	echo "Checkpoint!!" >> running.txt
 	exit 85
 }
 
