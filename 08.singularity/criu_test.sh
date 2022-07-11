@@ -7,31 +7,20 @@ function ReceiveCheckPointSignal() {
 	mkdir dump-${TPID}
 	criu dump -v5 -t ${TPID} -D dump-${TPID} -o criu.log # -j #--evasive-devices #--leave-running
 	echo "$(pwd)" > workdir 
-        if [ ! -s tpid ]; then	
-		echo ${TPID} > tpid
+    	tar -czvf checkpoint.tar.gz dump-${TPID}
+        if [ ! -e finish.txt ]; then
+		touch finish.txt
 	fi
-    	tar -czvf checkpoint.tar.gz dump-${TPID} workdir tpid
-
-	## Debuging
-	#sudo chown geonmo.geonmo dump.log
-	#cp dump.log /mnt/share/geonmo
-
-	#cp -f dump.tar.gz /mnt/share/geonmo/
-	#sudo rm -rf ${WORKDIR}
-	echo "Checkpoint!!" >> running.txt
+	echo "Checkpoint!!" >> state_running.txt
 	exit 85
 }
 
 
 if [ -s checkpoint.tar.gz ]; then
         tar -zxvf checkpoint.tar.gz
-	WORKDIR=$(cat workdir)
-	TPID=$(cat tpid)
-	#sudo ln -Tfs $(pwd) ${WORKDIR}
-         	
-	#criu restore -d -j --inherit-fd "fd[7]:${WORKDIR:1}/sleep_output.log" --inherit-fd "fd[8]:${WORKDIR:1}/sleep_error.log" --inherit-fd "fd[9]:${WORKDIR:1}/test_sleep.sh" 7>> sleep_output.log 8>>sleep_error.log 9> test_sleep.sh
-	criu restore -d -D dump-${TPID}
-	#TPID=$(pgrep test_sleep.sh)
+	DUMP_DIR=$(ls dump-*)
+	TPID=${DUMP_DIR:5}
+	criu restore -d -D $DUMP_DIR
 	while true
 	do
 		echo "Monitoring ${TPID} procces"
@@ -43,7 +32,7 @@ if [ -s checkpoint.tar.gz ]; then
 		sleep 1
 	done
 else
-	setsid ./test_sleep.sh </dev/null &> /dev/null & #>sleep_output.log 2> sleep_error.log < /dev/null &
+	setsid ./test_sleep.sh </dev/null &> /dev/null & 
 	TPID=$!
 	wait ${TPID}
 fi
