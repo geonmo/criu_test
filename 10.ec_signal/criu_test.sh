@@ -22,19 +22,21 @@ if [ -s checkpoint.tar.gz ]; then
 	echo ${DUMP_DIR}
 	echo ${TPID}
 	criu restore -d -D $DUMP_DIR
-	while true
-	do
-		echo "Monitoring ${TPID} procces"
-		kill -s 0 ${TPID} 
-		if [ $? -ne 0 ]
-        	then
-		   exit 0   
-		fi
-		sleep 1
-	done
 else
 	setsid ./test_sleep.sh </dev/null &> /dev/null & 
 	TPID=$!
-	wait ${TPID}
 fi
 
+while true
+do
+	echo "Monitoring ${TPID} procces"
+	kill -s 0 ${TPID} 
+	if [ $? -ne 0 ]
+	then
+	   exit 0   
+	fi
+	if [[ -e state_running.txt && $(tail -n1 state_running.txt) == "10" ]]; then
+		kill -SIGUSR2 $$
+	fi
+	sleep 1
+done
