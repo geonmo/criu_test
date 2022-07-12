@@ -4,12 +4,11 @@ trap ReceiveCheckPointSignal SIGUSR2
 
 function ReceiveCheckPointSignal() {
 	TPID=$(pgrep test_sleep.sh)
-	mkdir dump-${TPID}
-	criu dump -v5 -t ${TPID} -D dump-${TPID} -o criu.log # -j #--evasive-devices #--leave-running
-    	tar -czvf checkpoint.tar.gz dump-${TPID}
-        if [ ! -e finish.txt ]; then
-		touch finish.txt
-	fi
+	rm -rf dumped_images-*
+	IMG_DIR="dumped_images-$(uuidgen)"
+	mkdir ${IMG_DIR}
+	criu dump -v5 -t ${TPID} -D $IMG_DIR -o criu.log # -j #--evasive-devices #--leave-running
+    	tar -czvf checkpoint.tar.gz $IMG_DIR
 	echo "Checkpoint!!" >> state_running.txt
 	exit 85
 }
@@ -17,22 +16,23 @@ function ReceiveCheckPointSignal() {
 
 if [ -s checkpoint.tar.gz ]; then
         tar -zxvf checkpoint.tar.gz
-	DUMP_DIR=$(echo dump-*)
-	TPID=${DUMP_DIR:5}
-	echo ${DUMP_DIR}
-	echo ${TPID}
-	criu restore -d -D $DUMP_DIR
-else
-	setsid ./test_sleep.sh </dev/null &> /dev/null & 
-	TPID=$!
+	IMG_DIR=$(echo dumped_images-*)
+	criu restore -d -D $IMG_DIR
 fi
 
+TPID=$(pgrep test_sleep.sh)
+if [ -z $TPID ]; then
+	echo "Can not find test_sleep.sh. Start script from begining"
+	setsid ./test_sleep.sh </dev/null &> /dev/null &
+	TPID=$!
+else
+	echo "Found test_sleep.sh: $TPID"
+fi
 while true
 do
 	echo "Monitoring ${TPID} procces"
 	kill -s 0 ${TPID} 
-	if [ $? -ne 0 ]
-	then
+	if [ $? -ne 0 ]; then
 	   exit 0   
 	fi
 	if [[ -e state_running.txt && $(tail -n1 state_running.txt) == "10" ]]; then
