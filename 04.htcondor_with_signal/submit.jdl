@@ -15,21 +15,17 @@ log = submit.log
 
 
 KillSig= SIGUSR2
-#KillSigTimeout = 30
+KillSigTimeout = 30
 
-#+WantCheckpointSignal = True
-#+WantCheckpoint = True
-#+CheckpointSig = "SIGUSR2"
-#+CheckpointExitBySignal = True
-#+CheckpointExitCode = 85
-#+WantFTOnCheckpoint = True
-#+WantRemoteSyscalls = True
+checkpoint_exit_code = 85
++WantFTOnCheckpoint = True
 
 
 requirements = (Machine =?= "node2.intranet.local")
 
-transfer_input_files = test_sleep.sh, /mnt/share/geonmo/dump.tar.gz
-transfer_output_files = sleep_output.log, sleep_error.log
+transfer_input_files = test_sleep.sh
+transfer_checkpoint_files = dump.tar.gz,state_running.txt
+#transfer_output_files = sleep_output.log, sleep_error.log
 
 queue 1
 
