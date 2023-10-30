@@ -1,5 +1,5 @@
 executable = test.sh
-universe   = vanilla
+universe   = container
 arguments  = $(Process)
 
 
@@ -17,19 +17,16 @@ log = submit.log
 KillSig= SIGUSR2
 KillSigTimeout = 30
 
-#+WantCheckpointSignal = True
-#+WantCheckpoint = True
-#+CheckpointSig = "SIGUSR2"
-#+CheckpointExitBySignal = True
-#+CheckpointExitCode = 85
-#+WantFTOnCheckpoint = True
-#+WantRemoteSyscalls = True
+container_image = ./criu.sif
+#+SingularityBind = "/shared"
++SingularityExtraArgs= "--add-caps CAP_CHECKPOINT_RESTORE"
+
+checkpoint_exit_code = 85
++WantFTOnCheckpoint = True
 
 
-requirements = (Machine =?= "node2.intranet.local")
-
-transfer_input_files = test_root.py, /mnt/share/geonmo/dump.tar.gz
-transfer_output_files = root_output.log, root_error.log, h1.root
+transfer_input_files = test_root.py, 
+transfer_output_files = checkpoint.tar.gz, h1.root
 
 queue 1
 
